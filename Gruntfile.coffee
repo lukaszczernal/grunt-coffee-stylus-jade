@@ -1,5 +1,5 @@
 module.exports = (grunt)->
-  
+
   ############################################################
   # Project configuration
   ############################################################
@@ -19,6 +19,7 @@ module.exports = (grunt)->
       buildScripts: [
         'public/js/**/*.js', 
         '!public/js/application.js'
+        '!public/js/vendor.js'
       ]
       watchStyles: [
         'public/css/**/*.css'
@@ -26,6 +27,10 @@ module.exports = (grunt)->
       watchScripts: [
         'public/js/**/*.js'
       ]
+
+    bower_concat:
+      all:
+        dest: 'public/js/vendor.js'
 
     coffee:
       build:
@@ -42,7 +47,8 @@ module.exports = (grunt)->
         options:
           mangle: true
         files:
-          'public/js/application.js': ['public/**/*.js']
+          'public/js/application.js': ['public/**/*.js', '!public/js/vendor.js']
+          'public/js/vendor.js': ['public/js/vendor.js']
 
     jade:
       build:
@@ -118,14 +124,16 @@ module.exports = (grunt)->
   grunt.loadNpmTasks('grunt-contrib-stylus')
   grunt.loadNpmTasks('grunt-autoprefixer')
   grunt.loadNpmTasks('grunt-contrib-cssmin')
+  grunt.loadNpmTasks('grunt-bower-concat')
 
   ############################################################
   # Alias tasks
   ############################################################
 
-  grunt.registerTask('buildStyles', ['stylus', 'autoprefixer', 'cssmin', 'clean:buildStyles'])
-  grunt.registerTask('buildScripts', ['coffee', 'uglify', 'clean:buildScripts'])
   grunt.registerTask('buildTemplates', ['jade'])
+  grunt.registerTask('buildStyles', ['stylus', 'autoprefixer', 'cssmin', 'clean:buildStyles'])
+  grunt.registerTask('buildScripts', ['bower_concat', 'coffee', 'uglify', 'clean:buildScripts'])
+  
 
   grunt.registerTask('build', ['clean:build', 'buildTemplates', 'buildStyles', 'buildScripts'])
   grunt.registerTask('server', ['build', 'connect', 'watch'])
