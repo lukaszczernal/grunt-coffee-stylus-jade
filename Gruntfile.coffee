@@ -28,9 +28,10 @@ module.exports = (grunt)->
         'public/js/**/*.js'
       ]
 
-    bower_concat:
-      all:
-        dest: 'public/js/vendor.js'
+    # bower_concat:
+    #   all:
+    #     dest: 'public/js/vendor.js'
+    #     exclude: ['normalize-css']
 
     coffee:
       build:
@@ -52,6 +53,8 @@ module.exports = (grunt)->
 
     jade:
       build:
+        options:
+          pretty: true
         files: [
           expand: true
           cwd: 'app'
@@ -86,27 +89,37 @@ module.exports = (grunt)->
           'public/css/application.css': ['public/**/*.css']
 
     watch:
+      options:
+        livereload: 3810
       styles:
         files: 'app/**/*.styl'
         tasks: ['watchStyles']
-        options:
-          livereload: true
       scripts: 
         files: 'app/**/*.coffee'
         tasks: ['watchScripts']
-        options:
-          livereload: true
       templates:
         files: 'app/**/*.jade'
         tasks: ['watchTemplates']
-        options:
-          livereload: true
 
     connect:
+      options:
+        port: '8010'
+        hostname: 'localhost'
+        livereload: '3810'
+        base: 'public'
       server:
         options:
-          base: 'public'
+          open: true
+          
+    # process index file
+    useminPrepare:
+      html: 'public/index.html'
+      options:
+        dest: 'public'
+        # flow: { steps: { 'js': [], 'css': []}, post: {}}
 
+    usemin:
+      html: ['public/index.html']
 
 
   ##############################################################
@@ -125,6 +138,7 @@ module.exports = (grunt)->
   grunt.loadNpmTasks('grunt-autoprefixer')
   grunt.loadNpmTasks('grunt-contrib-cssmin')
   grunt.loadNpmTasks('grunt-bower-concat')
+  grunt.loadNpmTasks('grunt-usemin')
 
   ############################################################
   # Alias tasks
@@ -132,15 +146,18 @@ module.exports = (grunt)->
 
   grunt.registerTask('buildTemplates', ['jade'])
   grunt.registerTask('buildStyles', ['stylus', 'autoprefixer', 'cssmin', 'clean:buildStyles'])
-  grunt.registerTask('buildScripts', ['bower_concat', 'coffee', 'uglify', 'clean:buildScripts'])
+  # grunt.registerTask('buildScripts', ['bower_concat', 'coffee', 'uglify', 'clean:buildScripts'])
+  grunt.registerTask('buildScripts', ['coffee', 'uglify', 'clean:buildScripts'])
   
 
   grunt.registerTask('build', ['clean:build', 'buildTemplates', 'buildStyles', 'buildScripts'])
-  grunt.registerTask('server', ['build', 'connect', 'watch'])
+  grunt.registerTask('server', ['build', 'connect:server', 'watch'])
 
   grunt.registerTask('watchScripts', ['clean:watchScripts', 'buildScripts'])
   grunt.registerTask('watchStyles', ['clean:watchStyles', 'buildStyles'])
   grunt.registerTask('watchTemplates', ['jade'])
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('default', ['build'])
+
+  grunt.registerTask('use', ['useminPrepare','usemin'])
 

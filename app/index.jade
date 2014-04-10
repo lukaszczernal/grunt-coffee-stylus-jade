@@ -6,25 +6,31 @@ html.no-js
     title
     meta(name='description', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1')
-    //- link(rel='stylesheet', href='css/normalize.css')
-    //- link(rel='stylesheet', href='css/main.css')
-    //-script(src='js/vendor/modernizr-2.7.1.min.js')
+    
+    //build:css(bower_components) css/modules.css
+    link(rel='stylesheet', href='normalize-css/normalize.css')
+    //endbuild
+
+    link(rel='stylesheet', href='css/application.css')
+    //- script(src='js/vendor/modernizr-2.7.1.min.js')
   body
-    <!--[if lt IE 8]>
-    p.browsehappy
-      | You are using an <strong>outdated</strong> browser.
-      | Please <a href="http://browsehappy.com/">upgrade your browser</a>
-      | to improve your experience.
-    <![endif]-->
+    //- <!--[if lt IE 8]>
+    //- p.browsehappy
+    //-   | You are using an <strong>outdated</strong> browser.
+    //-   | Please <a href="http://browsehappy.com/">upgrade your browser</a>
+    //-   | to improve your experience.
+    //- <![endif]-->
 
     //- Add your site or application content here
-    p Hello world! This is HTML5 Boilerplate.
+    include ./templates/header
+    include ./templates/body
 
     //- script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     //- script window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')
-    script(src='js/vendor.js')
+    //build:js(bower_components) js/vendor.js
+    script(type='text/javascript', src='jquery/dist/jquery.js')
+    //endbuild
     script(src='js/application.js')
-    script(src="//localhost:35729/livereload.js")
 
     //- Google Analytics: change UA-XXXXX-X to be your site's ID.
     //-
