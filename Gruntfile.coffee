@@ -7,28 +7,45 @@ module.exports = (grunt)->
   grunt.initConfig
     
     clean:
-      build: [
-        'public/**/*', 
-        '!public/assets', 
-        '!public/assets/*'
+      tmp: [
+        '.tmp/*'
       ]
-      buildStyles: [
-        'public/css/**/*.css', 
-        '!public/css/application.css'
+      public: [
+        'public/*'
       ]
-      buildScripts: [
-        'public\\js\\**\\*.js', 
-        '!public\\js\\application.js'
-        '!public\\js\\vendor.js'
-      ]
-      watchStyles: [
-        'public/css/**/*.css'
-      ]
-      watchScripts: [
-        'public/js/**/*.js'
-      ]
+      # build: [
+      #   'public/**/*', 
+      #   '!public/assets', 
+      #   '!public/assets/*'
+      # ]
+      # buildStyles: [
+      #   'public/css/**/*.css', 
+      #   '!public/css/application.css'
+      # ]
+      # buildScripts: [
+      #   'public\\js\\**\\*.js', 
+      #   '!public\\js\\application.js'
+      #   '!public\\js\\vendor.js'
+      # ]
+      # watchStyles: [
+      #   'public/css/**/*.css'
+      # ]
+      # watchScripts: [
+      #   'public/js/**/*.js'
+      # ]
 
-    # concat:
+    concat:
+      server:
+        files: [
+          {
+            dest: 'public/js/application.js'
+            src: '.tmp/**/*.js'
+          }
+          {
+            dest: 'public/css/application.css'
+            src: '.tmp/**/*.css'
+          }
+        ]
     #   generated:
     #     files: [ 
     #       {
@@ -53,7 +70,7 @@ module.exports = (grunt)->
           expand: true
           cwd: 'app/js'
           src: ['**/*.coffee']
-          dest: 'public/js'
+          dest: '.tmp/js/'
           ext: '.js'
         ]
 
@@ -92,22 +109,33 @@ module.exports = (grunt)->
         files: [
           expand: true
           cwd: 'app/css'
-          src: ['**/*.styl']
-          dest: 'public/css'
+          src: ['index.styl']
+          dest: '.tmp/css'
+          ext: '.css'
+        ]
+      server:
+        options:
+          compress: false
+          linenos: false
+        files: [
+          expand: true
+          cwd: 'app/css'
+          src: ['index.styl']
+          dest: '.tmp/css'
           ext: '.css'
         ]
 
-    autoprefixer:
-      build:
-        expand: true
-        cwd: 'public'
-        src: ['**/*.css']
-        dest: 'public'
+    # autoprefixer:
+    #   build:
+    #     expand: true
+    #     cwd: 'public'
+    #     src: ['**/*.css']
+    #     dest: 'public'
 
     cssmin:
       build:
         files:
-          'public/css/application.css': ['public/**/*.css']
+          'public/css/application.css': ['.tmp/**/*.css']
 
     watch:
       options:
@@ -168,12 +196,10 @@ module.exports = (grunt)->
 
   grunt.registerTask('buildTemplates', ['jade'])
   grunt.registerTask('buildStyles', ['stylus', 'autoprefixer', 'cssmin', 'clean:buildStyles'])
-  # grunt.registerTask('buildScripts', ['bower_concat', 'coffee', 'uglify', 'clean:buildScripts'])
   grunt.registerTask('buildScripts', ['coffee', 'uglify', 'clean:buildScripts'])
   
 
   grunt.registerTask('build', ['clean:build', 'buildTemplates', 'buildStyles', 'buildScripts'])
-  grunt.registerTask('server', ['build', 'connect:server', 'watch'])
 
   grunt.registerTask('watchScripts', ['clean:watchScripts', 'buildScripts'])
   grunt.registerTask('watchStyles', ['clean:watchStyles', 'buildStyles'])
@@ -182,5 +208,23 @@ module.exports = (grunt)->
   grunt.registerTask('default', ['build'])
 
   grunt.registerTask('use', ['jade', 'useminPrepare','usemin', 'concat'])
-  # grunt.registerTask('use', ['useminPrepare'])
+
+
+  grunt.registerTask('server', 
+    [
+      'clean:public'
+      'jade'
+
+      'stylus:server'
+
+      'coffee'
+
+      'concat' #js and css from .tmp to public
+
+      'clean:tmp'
+
+      'connect:server'
+      'watch'
+    ]
+  )
 
