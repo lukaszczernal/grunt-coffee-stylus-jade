@@ -17,9 +17,9 @@ module.exports = (grunt)->
         '!public/css/application.css'
       ]
       buildScripts: [
-        'public/js/**/*.js', 
-        '!public/js/application.js'
-        '!public/js/vendor.js'
+        'public\\js\\**\\*.js', 
+        '!public\\js\\application.js'
+        '!public\\js\\vendor.js'
       ]
       watchStyles: [
         'public/css/**/*.css'
@@ -27,6 +27,20 @@ module.exports = (grunt)->
       watchScripts: [
         'public/js/**/*.js'
       ]
+
+    # concat:
+    #   generated:
+    #     files: [ 
+    #       {
+    #         dest: '.tmp\\concat\\css\\vendor.css',
+    #         src: [ 'bower_components\\normalize-css\\normalize.css' ] 
+    #       }
+    #       { 
+    #         dest: '.tmp\\concat\\js\\vendor.js',
+    #         src: [ 'bower_components\\jquery\\dist\\jquery.js' ] 
+    #       } 
+    #     ]
+
 
     # bower_concat:
     #   all:
@@ -47,9 +61,16 @@ module.exports = (grunt)->
       build:
         options:
           mangle: true
-        files:
-          'public/js/application.js': ['public/**/*.js', '!public/js/vendor.js']
-          'public/js/vendor.js': ['public/js/vendor.js']
+        files: [
+          {
+            dest: 'public/js/application.js'
+            src: ['public/**/*.js', '!public/js/vendor.js']
+          }
+          {
+            dest: 'public/js/vendor.js'
+            src: ['public/js/vendor.js']
+          }
+        ]
 
     jade:
       build:
@@ -110,6 +131,7 @@ module.exports = (grunt)->
       server:
         options:
           open: true
+          base: ['.tmp', 'bower_components', '.', 'public']
           
     # process index file
     useminPrepare:
@@ -159,5 +181,6 @@ module.exports = (grunt)->
 
   grunt.registerTask('default', ['build'])
 
-  grunt.registerTask('use', ['useminPrepare','usemin'])
+  grunt.registerTask('use', ['jade', 'useminPrepare','usemin', 'concat'])
+  # grunt.registerTask('use', ['useminPrepare'])
 
