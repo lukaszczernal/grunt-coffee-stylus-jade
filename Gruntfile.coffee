@@ -41,14 +41,6 @@ module.exports = (grunt)->
         files:
           '.tmp/js/application.js': '<%= cfg.coffeeFiles %>'
 
-    # coffee:
-    #   options:
-    #     bare: true
-    #     sourceMap: true
-    #   compile:
-    #     files:
-    #       '<%= cfg.tmp %>/app.js': '<%= cfg.coffeeFiles %>'
-
     uglify:
       build:
         options:
@@ -199,5 +191,4 @@ module.exports = (grunt)->
     'connect:server'
     'watch'
   ])
-
 
