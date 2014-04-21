@@ -5,57 +5,49 @@ module.exports = (grunt)->
   ############################################################
 
   grunt.initConfig
+
+    cfg: 
+      # http:
+      #   port: 8010 # http server port
+      #   host: '*' # listen on all interfaces
+      #   livereloadport: 3810 #livereload port      
+      # tmp: '.tmp'
+      # dist: 'public'
+      # coffeeFiles: [
+      #   'app/js/app.coffee' # first app coffee
+      #   'app/*.coffee'
+      #   'app/**/*.coffee'
+      # ]
+      coffeeFiles: [
+        'app/js/app.coffee' # first app js
+        'app/js/*.coffee'
+        'app/js/**/*.coffee'
+      ] 
     
     clean:
-      build: [
-        'public/**/*', 
-        '!public/assets', 
-        '!public/assets/*'
+      all:[
+        '.tmp/**/*'
+        'public/**/*',
       ]
-      buildStyles: [
-        'public/css/**/*.css', 
-        '!public/css/application.css'
+      stylus: [
+        '.tmp/css/index.css'
       ]
-      buildScripts: [
-        'public\\js\\**\\*.js', 
-        '!public\\js\\application.js'
-        '!public\\js\\vendor.js'
-      ]
-      watchStyles: [
-        'public/css/**/*.css'
-      ]
-      watchScripts: [
-        'public/js/**/*.js'
-      ]
-
-    # concat:
-    #   generated:
-    #     files: [ 
-    #       {
-    #         dest: '.tmp\\concat\\css\\vendor.css',
-    #         src: [ 'bower_components\\normalize-css\\normalize.css' ] 
-    #       }
-    #       { 
-    #         dest: '.tmp\\concat\\js\\vendor.js',
-    #         src: [ 'bower_components\\jquery\\dist\\jquery.js' ] 
-    #       } 
-    #     ]
-
-
-    # bower_concat:
-    #   all:
-    #     dest: 'public/js/vendor.js'
-    #     exclude: ['normalize-css']
 
     coffee:
+      options:
+        bare: true
+        sourceMap: true      
       build:
-        files: [
-          expand: true
-          cwd: 'app/js'
-          src: ['**/*.coffee']
-          dest: 'public/js'
-          ext: '.js'
-        ]
+        files:
+          '.tmp/js/application.js': '<%= cfg.coffeeFiles %>'
+
+    # coffee:
+    #   options:
+    #     bare: true
+    #     sourceMap: true
+    #   compile:
+    #     files:
+    #       '<%= cfg.tmp %>/app.js': '<%= cfg.coffeeFiles %>'
 
     uglify:
       build:
@@ -85,42 +77,36 @@ module.exports = (grunt)->
         ]
 
     stylus:
-      build:
+      tmp:
         options:
-          compress: true
+          compress: false
           linenos: false
         files: [
           expand: true
-          cwd: 'app/css'
-          src: ['**/*.styl']
-          dest: 'public/css'
+          cwd: 'app/css/'
+          src: ['index.styl']
+          dest: '.tmp/css'
           ext: '.css'
         ]
-
-    autoprefixer:
-      build:
-        expand: true
-        cwd: 'public'
-        src: ['**/*.css']
-        dest: 'public'
 
     cssmin:
       build:
         files:
-          'public/css/application.css': ['public/**/*.css']
+          'public/css/application.css': ['.tmp/css/index.css']
 
     watch:
       options:
+        spawn: false
         livereload: 3810
       styles:
         files: 'app/**/*.styl'
-        tasks: ['watchStyles']
+        tasks: ['stylus', 'copy:stylus','clean:stylus']
       scripts: 
         files: 'app/**/*.coffee'
-        tasks: ['watchScripts']
+        tasks: ['coffee']
       templates:
         files: 'app/**/*.jade'
-        tasks: ['watchTemplates']
+        tasks: ['jade']
 
     connect:
       options:
@@ -138,11 +124,46 @@ module.exports = (grunt)->
       html: 'public/index.html'
       options:
         dest: 'public'
-        # flow: { steps: { 'js': [], 'css': []}, post: {}}
 
     usemin:
       html: ['public/index.html']
 
+    copy:
+      assets:
+        files: [
+          expand: true
+          cwd: 'app/assets'
+          # src: ['**', '!**/*.png', '!**/*.jpg', '!**/*.gif']
+          src: ['**']
+          dest: 'public'
+        ]
+      stylus: 
+        files: '.tmp/css/application.css': '.tmp/css/index.css'
+
+    # concat:
+    #   build:
+    #     files: [
+    #       # {
+    #       #   dest: '.tmp/concat/js/application.js'
+    #       #   src: ['<%= cfg.coffeeFiles %>']
+    #       # }
+    #       {
+    #         dest: '.tmp/concat/css/application.css'
+    #         src: ['.tmp/stylus/index.css']            
+    #       }
+    #     ]
+
+    # concat:
+    #   vendor:
+    #     options:
+    #       separator: ';\n'
+    #     src: ['app/**/*.js', '!app/assets/**/*.js', '!app/assets/test/**']
+    #     dest: '<%= cfg.tmp %>/vendor.js'
+    #   css:
+    #     options:
+    #       separator: '\n\n'
+    #     src: ['app/**/*.css']
+    #     dest: '<%= cfg.tmp %>/vendor.css'
 
   ##############################################################
   # Dependencies
@@ -157,30 +178,26 @@ module.exports = (grunt)->
   grunt.loadNpmTasks('grunt-contrib-jade')
   grunt.loadNpmTasks('grunt-contrib-connect')
   grunt.loadNpmTasks('grunt-contrib-stylus')
-  grunt.loadNpmTasks('grunt-autoprefixer')
   grunt.loadNpmTasks('grunt-contrib-cssmin')
-  grunt.loadNpmTasks('grunt-bower-concat')
   grunt.loadNpmTasks('grunt-usemin')
 
   ############################################################
   # Alias tasks
   ############################################################
 
-  grunt.registerTask('buildTemplates', ['jade'])
-  grunt.registerTask('buildStyles', ['stylus', 'autoprefixer', 'cssmin', 'clean:buildStyles'])
-  # grunt.registerTask('buildScripts', ['bower_concat', 'coffee', 'uglify', 'clean:buildScripts'])
-  grunt.registerTask('buildScripts', ['coffee', 'uglify', 'clean:buildScripts'])
-  
+  grunt.registerTask('server', [
+    'clean:all' # public and tmp
+    'copy:assets' # public
+    'coffee' # tmp
+    'jade' # public
+    'stylus' # tmp
+    'copy:stylus' # tmp
+    'clean:stylus' # tmp
+    # 'useminPrepare'
+    # 'concat:build' # tmp
+    # 'cssmin' # public
+    'connect:server'
+    'watch'
+  ])
 
-  grunt.registerTask('build', ['clean:build', 'buildTemplates', 'buildStyles', 'buildScripts'])
-  grunt.registerTask('server', ['build', 'connect:server', 'watch'])
-
-  grunt.registerTask('watchScripts', ['clean:watchScripts', 'buildScripts'])
-  grunt.registerTask('watchStyles', ['clean:watchStyles', 'buildStyles'])
-  grunt.registerTask('watchTemplates', ['jade'])
-
-  grunt.registerTask('default', ['build'])
-
-  grunt.registerTask('use', ['jade', 'useminPrepare','usemin', 'concat'])
-  # grunt.registerTask('use', ['useminPrepare'])
 
