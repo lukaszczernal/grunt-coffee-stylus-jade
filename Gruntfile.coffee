@@ -99,6 +99,9 @@ module.exports = (grunt)->
       templates:
         files: 'app/**/*.jade'
         tasks: ['jade']
+      assets:
+        files: 'app/assets/**/*'
+        tasks: ['copy:assets']
 
     connect:
       options:
@@ -127,7 +130,7 @@ module.exports = (grunt)->
           cwd: 'app/assets'
           # src: ['**', '!**/*.png', '!**/*.jpg', '!**/*.gif']
           src: ['**']
-          dest: 'public'
+          dest: 'public/'
         ]
       stylus: 
         files: '.tmp/css/application.css': '.tmp/css/index.css'
