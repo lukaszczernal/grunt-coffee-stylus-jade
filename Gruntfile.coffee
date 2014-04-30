@@ -48,12 +48,12 @@ module.exports = (grunt)->
         files: [
           {
             dest: 'public/js/application.js'
-            src: ['public/**/*.js', '!public/js/vendor.js']
+            src: ['public/js/application.js']
           }
-          {
-            dest: 'public/js/vendor.js'
-            src: ['public/js/vendor.js']
-          }
+          # {
+          #   dest: 'public/js/vendor.js'
+          #   src: ['public/js/vendor.js']
+          # }
         ]
 
     jade:
@@ -84,7 +84,7 @@ module.exports = (grunt)->
     cssmin:
       build:
         files:
-          'public/css/application.css': ['.tmp/css/index.css']
+          'public/css/application.css': ['public/css/application.css']
 
     watch:
       options:
@@ -195,3 +195,16 @@ module.exports = (grunt)->
     'watch'
   ])
 
+  grunt.registerTask('build', [
+    'clean:all' # public and tmp
+    'copy:assets' # public
+    'coffee' # tmp
+    'jade' # public
+    'stylus' # tmp
+    'copy:stylus' # tmp
+    'clean:stylus' # tmp
+    'useminPrepare'
+    'concat' # tmp
+    'cssmin' # public
+    'uglify:build' # public
+  ])
