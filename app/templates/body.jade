@@ -1,20 +1,29 @@
 ul.page
 	li.page-wrapper(id="page1")
-		img.page-image(src="img/leaflet/1.jpg")
+		img.page-image(data-original="img/leaflet/1.jpg")
 	li.page-wrapper(id="page2")
-		img.page-image(src="img/leaflet/2.jpg")
+		img.page-image(data-original="img/leaflet/2.jpg")
 	li.page-wrapper(id="page3")
-		img.page-image(src="img/leaflet/3.jpg")
+		img.page-image(data-original="img/leaflet/3.jpg")
 	li.page-wrapper(id="page4")
-		img.page-image(src="img/leaflet/4.jpg")
+		img.page-image(data-original="img/leaflet/4.jpg")
 	li.page-wrapper(id="kontakt")
-		h1.page-heading Kontakt
 		.contact
 			.contact-addressContainer
-				h2.contact-heading Sklep
-				p ul. Torowa 1
-				p	48-300 Nysa
-				p tel. (77) 
+
+				.vcard
+					//- a.url.fn.n(href="http://wielkikiermasz.pl") Wielki Kiermasz
+					h1.org Wielki Kiermasz AGD - sklep firmowy Artdom
+					a.email(href="mailto:czernal@artdom.opole.pl") czernal@artdom.opole.pl
+					.adr
+						.street-address Towarowa 1
+						.locality Nysa
+						.region woj. opolskie
+						.postal-code 48-300
+						.country-name Polska
+
+					.tel (77) 433
+
 			.contact-mapContainer
 				<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2538.740350410105!2d17.339856846557623!3d50.48317732420705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4711c419bfd6ec2d%3A0x3a1a36b8876bcead!2sTorowa+1!5e0!3m2!1spl!2spl!4v1398808748604" width="400" height="300" frameborder="0" style="border:0"></iframe>
 

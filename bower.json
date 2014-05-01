@@ -2,6 +2,7 @@
   "name": "coffee-with-style",
   "dependencies": {
     "jquery": "~2.1.0",
-    "normalize-css": "~3.0.1"
+    "normalize-css": "~3.0.1",
+    "jquery.lazyload": "~1.9.3"
   }
 }

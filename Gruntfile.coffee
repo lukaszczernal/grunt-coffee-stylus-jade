@@ -48,12 +48,12 @@ module.exports = (grunt)->
         files: [
           {
             dest: 'public/js/application.js'
-            src: ['public/js/application.js']
+            src: '.tmp/js/application.js'
+          },
+          {
+            dest: 'public/js/vendor.js'
+            src: '.tmp/concat/js/vendor.js'
           }
-          # {
-          #   dest: 'public/js/vendor.js'
-          #   src: ['public/js/vendor.js']
-          # }
         ]
 
     jade:
@@ -83,8 +83,16 @@ module.exports = (grunt)->
 
     cssmin:
       build:
-        files:
-          'public/css/application.css': ['public/css/application.css']
+        files: [
+          {
+            dest: 'public/css/application.css'
+            src: '.tmp/css/application.css'
+          },
+          {
+            dest: 'public/css/vendor.css'
+            src: '.tmp/concat/css/vendor.css'
+          }
+        ]
 
     watch:
       options:
@@ -204,7 +212,8 @@ module.exports = (grunt)->
     'copy:stylus' # tmp
     'clean:stylus' # tmp
     'useminPrepare'
+    'usemin'
     'concat' # tmp
-    'cssmin' # public
+    'cssmin:build' # public
     'uglify:build' # public
   ])

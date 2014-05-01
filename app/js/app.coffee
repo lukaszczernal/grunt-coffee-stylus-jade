@@ -1,7 +1,4 @@
-class Test 
-  say : "very good"
+$( () ->
+	$("img.page-image").lazyload()
+)
 
-
-inst = new Test()
-
-console.log 'its ' + inst.say + '!!'
